@@ -28,8 +28,6 @@ import time
 import sys
 
 dbHost = 'localhost'
-dbUser = 'pgHistorian'
-dbPassword = 'pgHistorian'
 dbName = 'protogeniHistory'
 
 tableName = 'historyRecords'
