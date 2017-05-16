@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `debugTiming` (
 
 # Clear out old timing data (keep 8 days so we have info from last weekly run).
 DELETE FROM debugTiming
-WHERE eventTime < DATE_ADD(CURRENT_DATE, INTERVAL - 8 DAYS);
+WHERE eventTime < DATE_ADD(CURRENT_DATE, INTERVAL - 8 DAY);
 
 # And insert an entry for now.
 INSERT INTO debugTiming (event, eventTime) VALUES ('Cleaned debugTiming table.', now());
