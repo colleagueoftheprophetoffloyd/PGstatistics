@@ -21,17 +21,20 @@
 # IN THE WORK.
 #----------------------------------------------------------------------
 #
-# For debugging.
-DROP TABLE IF EXISTS debugTiming;
-CREATE TABLE `debugTiming` (
+# A table for timing statistics. Mostly useful for debugging.
+CREATE TABLE IF NOT EXISTS `debugTiming` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `event` text,
   `eventTime` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-INSERT INTO debugTiming (event, eventTime) VALUES ('Initialized debugTiming table.', now());
+# Clear out old timing data (keep 8 days so we have info from last weekly run).
+DELETE FROM debugTiming
+WHERE eventTime < DATE_ADD(CURRENT_DATE, INTERVAL - 8 DAYS);
 
+# And insert an entry for now.
+INSERT INTO debugTiming (event, eventTime) VALUES ('Cleaned debugTiming table.', now());
 
 
 # All the sites where anyone has ever created a sliver, plus a catch-all.
@@ -147,7 +150,8 @@ VALUES
 	('GEC22', '2014-10-24', '2015-03-26'),
 	('GEC23', '2015-03-27', '2015-06-18'),
 	('GEC24', '2015-06-19', '2016-03-09'),
-	('GEC25', '2016-03-10', '2099-12-31')
+	('GEC25', '2016-03-10', '2017-03-15'),
+	('GEC26', '2017-03-15', '2099-12-31')
 ;
 
 INSERT INTO debugTiming (event, eventTime) VALUES ('Initialized gecEpochs table.', now());
