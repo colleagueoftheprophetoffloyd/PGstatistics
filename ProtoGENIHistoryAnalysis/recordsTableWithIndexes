@@ -21,5 +21,6 @@ CREATE TABLE `historyRecords` (
   KEY `derived_test_site` (`derived_test_site`),
   KEY `creator_urn` (`creator_urn`),
   KEY `derived_quarter` (`derived_quarter`),
-  KEY `derived_epoch` (`derived_epoch`)
-) ENGINE=InnoDB AUTO_INCREMENT=190801 DEFAULT CHARSET=latin1
+  KEY `derived_epoch` (`derived_epoch`),
+  KEY `derived_site_name` (`derived_site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

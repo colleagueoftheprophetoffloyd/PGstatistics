@@ -38,6 +38,15 @@ CREATE TABLE `historyRecords` (
   `derived_site_name` varchar(200) DEFAULT NULL,
   `derived_test_slice` tinyint(1) DEFAULT NULL,
   `derived_test_site` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `derived_quarter` int(11) DEFAULT NULL,
+  `derived_epoch` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `created` (`created`),
+  KEY `derived_test_slice` (`derived_test_slice`),
+  KEY `derived_test_site` (`derived_test_site`),
+  KEY `creator_urn` (`creator_urn`),
+  KEY `derived_quarter` (`derived_quarter`),
+  KEY `derived_epoch` (`derived_epoch`),
+  KEY `derived_site_name` (`derived_site_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
