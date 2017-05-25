@@ -151,7 +151,7 @@ VALUES
 	('GEC23', '2015-03-27', '2015-06-18'),
 	('GEC24', '2015-06-19', '2016-03-09'),
 	('GEC25', '2016-03-10', '2017-03-15'),
-	('GEC26', '2017-03-15', '2099-12-31')
+	('GEC26', '2017-03-16', '2099-12-31')
 ;
 
 INSERT INTO debugTiming (event, eventTime) VALUES ('Initialized gecEpochs table.', now());
