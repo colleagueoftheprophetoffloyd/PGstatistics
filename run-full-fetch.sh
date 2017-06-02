@@ -30,12 +30,16 @@
 echo -n "Starting to fetch all ProtoGENI history at "
 date
 
+# Make sure output directories exist.
+mkdir -p $NOTINGESTEDBLOCKSDIR
+mkdir -p $INGESTEDBLOCKSDIR
+
 # Read history records from server.
 # Store them in 100 record blocks in notIngested/blocks.
 # Discard any partial blocks - we'll get them next time.
 echo "Reading all records from server."
 cd $SCRIPTSDIR
-$FETCH --credentials $CREDENTIALFILE --certificate $CERTFILE 1 5000000 100 $NOTINGESTEDBLOCKSDIR
+$FETCH --credentials $CREDENTIALFILE --certificate $CERTFILE 101 500 100 $NOTINGESTEDBLOCKSDIR
 
 # Write end time.
 echo -n "Finished fetching history at "
