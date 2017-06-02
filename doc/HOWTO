@@ -1,7 +1,7 @@
 Setting up statistics gathering on a new machine. (*** Work in progress. ***)
 
 1. Clone statistics code from git repo.
-git clone https://github.com/colleagueoftheprophetoffloyd/protogeniStatistics.git statistics
+git clone https://github.com/colleagueoftheprophetoffloyd/PGstatistics.git statistics
 
 
 2. Need a mysql installation. Docker seems to cover it adequately. Spin up a fresh ubuntu VM and do this stuff.
