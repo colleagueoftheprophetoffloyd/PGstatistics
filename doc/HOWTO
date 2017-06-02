@@ -1,0 +1,70 @@
+Setting up statistics gathering on a new machine. (*** Work in progress. ***)
+
+1. Clone statistics code from git repo.
+git clone https://github.com/colleagueoftheprophetoffloyd/protogeniStatistics.git statistics
+
+
+2. Need a mysql installation. Docker seems to cover it adequately. Spin up a fresh ubuntu VM and do this stuff.
+
+2a. Install docker
+sudo apt-get -y remove docker docker-engine
+sudo apt-get update
+sudo apt-get -y install \
+    linux-image-extra-$(uname -r) \
+    linux-image-extra-virtual
+sudo apt-get -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+
+*** Verify fingerprint 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88.
+sudo apt-key fingerprint 0EBFCD88
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
+sudo apt-get -y install docker-ce
+
+*** Set up docker for non-su access. Get the set of groups for which I'm a member, and add docker.
+groups
+*** Note output and modify next command appropriately
+sudo usermod -aG root,ch-geni-net,docker mberman
+
+*** Log out and ssh back to VM
+docker run hello-world
+
+2b. Start a docker mysql container
+docker run --name stats-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=***Password-goes-here*** -d mysql
+
+2c. Set up mysql defaults.
+Put the following into ~/.my.cnf
+[client]
+user=root
+password=***Password goes here***
+protocol=TCP
+port=3306
+
+3. Initialize mysql databases.
+mysql
+create database protogeniHistory;
+exit
+
+Now add line "database=protogeniHistory" to end of ~/.my.cnf
+
+mysql < ~/statistics/ProtogeniHistoryAnalysis/initializeRecordsTable.sql
+
+4. Set up credentials. Put these two files in .ssh:
+meb-emulab-special-cred.txt
+utah-emulab-cleartext.pem
+
+[The first must be obtained from Leigh. 
+The second can be created by downloading Emulab credential pack from Emulab site,
+getting an unencrypted version of the private key with "openssl rsa -in *credential-pack-file*",
+and replacing the encrypted key with the resulting output.]
+
+
