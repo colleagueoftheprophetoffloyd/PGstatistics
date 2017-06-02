@@ -1,8 +1,8 @@
 Setting up statistics gathering on a new machine. (*** Work in progress. ***)
 
-1. Clone statistics code from git repo.
+1. Clone statistics code from git repo and set up dependencies.
 git clone https://github.com/colleagueoftheprophetoffloyd/PGstatistics.git statistics
-
+sudo apt-get -y install python-m2crypto python-mysqldb
 
 2. Need a mysql installation. Docker seems to cover it adequately. Spin up a fresh ubuntu VM and do this stuff.
 
@@ -50,6 +50,8 @@ protocol=TCP
 port=3306
 
 3. Initialize mysql databases.
+sudo apt-get -y install mysql-client
+
 mysql
 create database protogeniHistory;
 exit
@@ -58,7 +60,7 @@ Now add line "database=protogeniHistory" to end of ~/.my.cnf
 
 mysql < ~/statistics/ProtogeniHistoryAnalysis/initializeRecordsTable.sql
 
-4. Set up credentials. Put these two files in .ssh:
+4. Set up credentials. Put these two files in .ssl:
 meb-emulab-special-cred.txt
 utah-emulab-cleartext.pem
 
