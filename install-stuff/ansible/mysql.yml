@@ -1,0 +1,17 @@
+---
+- hosts: all
+  vars_prompt:
+    - name: "mysql_root_password"
+      prompt: "Enter root password for mySQL installation"
+      private: yes
+  vars:
+    meb_example:
+      junk: "This is junk."
+  tasks:
+    - name: Disclose password.
+      become: true
+      debug: msg="The password is {{ mysql_root_password }}."
+    - name: Create mySQL config file (.my.cnf).
+      template:
+        src: my.cnf.j2
+        dest: "{{ ansible_env.HOME }}/.my.cnf"

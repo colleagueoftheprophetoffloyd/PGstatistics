@@ -1,47 +1,27 @@
 Setting up statistics gathering on a new machine. (*** Work in progress. ***)
 
+0. Spin up a fresh GENI VM. (Using Ubuntu in this example.) Then do the following.
+
 1. Clone statistics code from git repo and set up dependencies.
 git clone https://github.com/colleagueoftheprophetoffloyd/PGstatistics.git statistics
 sudo apt-get -y install python-m2crypto python-mysqldb
 
-2. Need a mysql installation. Docker seems to cover it adequately. Spin up a fresh ubuntu VM and do this stuff.
+2. Need a mysql installation. Docker seems to cover it adequately, and we'll install docker with ansible.
 
-2a. Install docker
-sudo apt-get -y remove docker docker-engine
-sudo apt-get update
-sudo apt-get -y install \
-    linux-image-extra-$(uname -r) \
-    linux-image-extra-virtual
-sudo apt-get -y install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+2a. Install ansible.
+sudo apt-get -y install ansible
 
+2b. Run ansible playbook to install docker.
+ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/docker.yml
 
-*** Verify fingerprint 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88.
-sudo apt-key fingerprint 0EBFCD88
-
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-sudo apt-get update
-sudo apt-get -y install docker-ce
-
-*** Set up docker for non-su access. Get the set of groups for which I'm a member, and add docker.
-groups
-*** Note output and modify next command appropriately
-sudo usermod -aG root,ch-geni-net,docker mberman
-
-*** Log out and ssh back to VM
+*** Docker installation changes group access. Log out and log back in now.
+*** Check that docker's working OK.
 docker run hello-world
 
-2b. Start a docker mysql container
+2c. Start a docker mysql container
 docker run --name stats-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=***Password-goes-here*** -d mysql
 
-2c. Set up mysql defaults.
+2d. Set up mysql defaults.
 Put the following into ~/.my.cnf
 [client]
 user=root
