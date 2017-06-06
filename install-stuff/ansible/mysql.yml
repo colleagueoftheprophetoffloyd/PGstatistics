@@ -1,0 +1,47 @@
+---
+- hosts: all
+  vars_prompt:
+    - name: "mysql_root_password"
+      prompt: "Please choose a root password for mySQL installation"
+      private: yes
+  tasks:
+    - name: Install needed mySQL and python packages.
+      become: true
+      become_user: root
+      become_method: sudo
+      apt: name={{item}} state=installed update_cache=yes
+      with_items:
+           - mysql-client
+           - python-m2crypto
+           - python-mysqldb
+           - python-docker
+
+    - name: Disclose password.
+      debug: msg="The password is {{ mysql_root_password }}."
+
+    - name: Start a mySQL docker container
+      docker_container:
+        name: stats-mysql
+        image: mysql
+        state: started
+        ports:
+          "3306:3306"
+        env:
+          MYSQL_ROOT_PASSWORD="{{ mysql_root_password }}"
+
+    - name: Create mySQL config file (.my.cnf).
+      template:
+        src: my.cnf.j2
+        dest: "{{ ansible_env.HOME }}/.my.cnf"
+
+    - name: Initialize ProtoGENI history database in mySQL.
+      command: mysql --database=mysql --execute="create database protogeniHistory;"
+      register: command_result
+      retries: 10
+      delay: 10
+      until: command_result | success
+
+    - name: Initialize historyRecords table.
+      shell: mysql < "{{ ansible_env.HOME }}/statistics/ProtoGENIHistoryAnalysis/initializeRecordsTable.sql"
+
+    

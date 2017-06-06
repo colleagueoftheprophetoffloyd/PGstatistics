@@ -30,6 +30,10 @@
 echo -n "Starting to fetch all ProtoGENI history at "
 date
 
+# Make sure output directories exist.
+mkdir -p $NOTINGESTEDBLOCKSDIR
+mkdir -p $INGESTEDBLOCKSDIR
+
 # Read history records from server.
 # Store them in 100 record blocks in notIngested/blocks.
 # Discard any partial blocks - we'll get them next time.

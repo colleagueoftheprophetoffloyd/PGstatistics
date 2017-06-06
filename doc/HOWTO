@@ -1,0 +1,31 @@
+Setting up statistics gathering on a new machine. (*** Work in progress. ***)
+
+0. Spin up a fresh GENI VM. (Using Ubuntu in this example.) Then do the following.
+
+1. Clone statistics code from git repo.
+git clone https://github.com/colleagueoftheprophetoffloyd/PGstatistics.git statistics
+
+2. Install ansible and make sure it's current.
+sudo apt-get -y install ansible
+ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/ansible.yml
+
+3. Need a mySQL installation. Docker seems to cover it adequately. First install docker, then configure mySQL.
+ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/docker.yml
+
+*** Docker installation changes group access. Log out and log back in now.
+*** Check that docker's working OK.
+docker run hello-world
+
+4. Start mySQL container and initialize protogeniHistory database (empty).
+ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/mysql.yml
+
+5. Set up credentials. Put these two files in .ssl:
+meb-emulab-special-cred.txt
+utah-emulab-cleartext.pem
+
+[The first must be obtained from Leigh. 
+The second can be created by downloading Emulab credential pack from Emulab site,
+getting an unencrypted version of the private key with "openssl rsa -in *credential-pack-file*",
+and replacing the encrypted key with the resulting output.]
+
+
