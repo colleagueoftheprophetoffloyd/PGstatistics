@@ -39,7 +39,7 @@ mkdir -p $INGESTEDBLOCKSDIR
 # Discard any partial blocks - we'll get them next time.
 echo "Reading all records from server."
 cd $SCRIPTSDIR
-$FETCH --credentials $CREDENTIALFILE --certificate $CERTFILE 101 500 100 $NOTINGESTEDBLOCKSDIR
+$FETCH --credentials $CREDENTIALFILE --certificate $CERTFILE 1 5000000 100 $NOTINGESTEDBLOCKSDIR
 
 # Write end time.
 echo -n "Finished fetching history at "
