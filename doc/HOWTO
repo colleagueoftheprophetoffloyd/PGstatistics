@@ -16,7 +16,7 @@ ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/docke
 *** Check that docker's working OK.
 docker run hello-world
 
-4. Start mySQL container and initializer protogeniHistory database (empty).
+4. Start mySQL container and initialize protogeniHistory database (empty).
 ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/mysql.yml
 
 5. Set up credentials. Put these two files in .ssl:
