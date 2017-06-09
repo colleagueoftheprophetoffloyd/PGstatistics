@@ -1,4 +1,4 @@
-Setting up statistics gathering on a new machine. (*** Work in progress. ***)
+Setting up statistics gathering on a new machine.
 
 0. Spin up a fresh GENI VM. (Using Ubuntu in this example.) Then do the following.
 
@@ -7,9 +7,10 @@ git clone https://github.com/colleagueoftheprophetoffloyd/PGstatistics.git stati
 
 2. Install ansible and make sure it's current.
 sudo apt-get -y install ansible
+ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/ansible.yml
 
-3. Run ansible playbook to: (a) update ansible install; (b) install docker; and
-(c) setup a mySQL installation and initialize an empty protogeniHistory database.
+3. Run ansible playbook to install docker, setup a mySQL installation, and initialize
+an empty protogeniHistory database.
 ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/statistics-server.yml
 
 *** Note: User will be added to docker group, but need to log out and log in again

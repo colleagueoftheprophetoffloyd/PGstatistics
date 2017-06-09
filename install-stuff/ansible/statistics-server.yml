@@ -1,4 +1,3 @@
 ---
-  - include: ansible.yml
   - include: docker.yml
   - include: mysql.yml
