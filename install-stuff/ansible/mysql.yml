@@ -1,9 +1,9 @@
 ---
 - hosts: all
-  vars_prompt:
-    - name: "mysql_root_password"
-      prompt: "Please choose a root password for mySQL installation"
-      private: yes
+#  vars_prompt:
+#    - name: "mysql_root_password"
+#      prompt: "Please choose a root password for mySQL installation"
+#      private: yes
   tasks:
     - name: Install needed mySQL and python packages.
       become: true
@@ -16,10 +16,19 @@
            - python-mysqldb
            - python-docker
 
+    - name: Pick a random password.
+      shell: tr -d -c "a-zA-Z0-9" < /dev/urandom | head -c 20
+      register: passgen
+
+    - set_fact: mysql_root_password="{{ passgen.stdout }}"
+
     - name: Disclose password.
       debug: msg="The password is {{ mysql_root_password }}."
 
     - name: Start a mySQL docker container
+      become: true
+      become_user: root
+      become_method: sudo
       docker_container:
         name: stats-mysql
         image: mysql

@@ -9,17 +9,17 @@ git clone https://github.com/colleagueoftheprophetoffloyd/PGstatistics.git stati
 sudo apt-get -y install ansible
 ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/ansible.yml
 
-3. Need a mySQL installation. Docker seems to cover it adequately. First install docker, then configure mySQL.
-ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/docker.yml
+3. Run ansible playbook to: (a) update ansible install; (b) install docker; and
+(c) setup a mySQL installation and initialize an empty protogeniHistory database.
+ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/statistics-server.yml
 
-*** Docker installation changes group access. Log out and log back in now.
-*** Check that docker's working OK.
-docker run hello-world
+*** Note: User will be added to docker group, but need to log out and log in again
+to be able to execute docker commands directly. (Really shouldn't matter.)
 
-4. Start mySQL container and initialize protogeniHistory database (empty).
-ansible-playbook -i "localhost," -c local statistics/install-stuff/ansible/mysql.yml
+*** Note: A random root password is generated for MySQL. It can be found in the
+user's ~/.my.cnf configuration file.
 
-5. Set up credentials. Put these two files in .ssl:
+4. Set up credentials. Put these two files in .ssl:
 meb-emulab-special-cred.txt
 utah-emulab-cleartext.pem
 
@@ -28,7 +28,7 @@ The second can be created by downloading Emulab credential pack from Emulab site
 getting an unencrypted version of the private key with "openssl rsa -in *credential-pack-file*",
 and replacing the encrypted key with the resulting output.]
 
-6. It's probably best to start from an archived set of history record files, which
+5. It's probably best to start from an archived set of history record files, which
 can be just tar'd up from an existing repository:
 tar cfz history.tgz statistics/ProtoGENIHistory
 
