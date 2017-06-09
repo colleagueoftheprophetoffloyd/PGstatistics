@@ -35,9 +35,12 @@ recordNames = ['index', 'destroyed', 'creator_uuid', 'creator_urn',
                'uuid', 'created', 'urn', 'slice_urn', 'slice_uuid', 'manifest']
 columnNames = ['`pg_index`', '`destroyed`', '`creator_uuid`', '`creator_urn`',
                '`uuid`', '`created`', '`urn`', '`slice_urn`', '`slice_uuid`', '`manifest`']
+dateColumnNames = ['destroyed', 'created'] # Note: no backquotes here.
 valueFormat = '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 insertFormat = "insert into `%s` (%s) values %s;"
 timeFormat='%Y-%m-%d %H:%M:%S'
+zeroTimeString='0000-00-00 00:00:00'
+earlyTimeString='1775-04-19 05:00:00'
 
 def formatEntry(record):
     '''Format one data record for insertion into database.
@@ -79,6 +82,24 @@ def insertValuesSlowly(db, records):
         cursor.close()
         db.commit()
        
+def fixBrokenDatetimes(records):
+    '''Fix badly formatted datetime values.
+
+    ProtoGENI sometimes gives bad datetime
+    values, particularly for the 'destroyed'
+    field. Sometimes these come as empty
+    strings, and sometimes as datetime strings
+    with all zeros. Either of these can cause
+    mySQL to gag. Change any such values to
+    be a constant pre-ProtoGENI date.'''
+    for record in records:
+        for dateColumn in dateColumnNames:
+            if dateColumn in record:
+                dateString = record[dateColumn]
+                if ((dateString == '') or
+                    (dateString == zeroTimeString)):
+                    record[dateColumn] = earlyTimeString
+
 def main(argv=None):
     # Initialize from arguments.
     if argv is None:
@@ -90,6 +111,9 @@ def main(argv=None):
     text = infile.read()
     infile.close()
     records = eval(text.strip())
+
+    # Odd hack to fix badly formatted datetime values.
+    fixBrokenDatetimes(records)
 
     # Summarize and quit
     print 'Got', len(records), 'records.'
