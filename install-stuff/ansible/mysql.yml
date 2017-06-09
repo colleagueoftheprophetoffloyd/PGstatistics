@@ -33,6 +33,7 @@
       template:
         src: my.cnf.j2
         dest: "{{ ansible_env.HOME }}/.my.cnf"
+        mode: 0600
 
     - name: Initialize ProtoGENI history database in mySQL.
       command: mysql --database=mysql --execute="create database protogeniHistory;"
