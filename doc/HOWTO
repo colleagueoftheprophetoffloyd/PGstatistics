@@ -28,4 +28,19 @@ The second can be created by downloading Emulab credential pack from Emulab site
 getting an unencrypted version of the private key with "openssl rsa -in *credential-pack-file*",
 and replacing the encrypted key with the resulting output.]
 
+6. It's probably best to start from an archived set of history record files, which
+can be just tar'd up from an existing repository:
+tar cfz history.tgz statistics/ProtoGENIHistory
+
+Copy over to the new machine, extract, and move any ingested files back
+to notIngested so they'll be reprocessed into the empty mySQL database:
+[[some scp commands here]]
+tar xfz history.tgz
+mv statistics/ProtoGENIHistory/ingested/blocks/* statistics/ProtoGENIHistory/notIngested/blocks
+
+Remember to update protogeni-test-scripts/NEXT_RECORD_NUMBER to be one bigger than the last
+index in any History-Records-XXXXX file.
+
+Now, should be able to do a run-update.sh, which should fetch any new records and then ingest
+everything.
 
