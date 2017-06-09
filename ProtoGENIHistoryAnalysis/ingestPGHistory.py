@@ -42,6 +42,11 @@ timeFormat='%Y-%m-%d %H:%M:%S'
 zeroTimeString='0000-00-00 00:00:00'
 earlyTimeString='1775-04-19 05:00:00'
 
+class TryGoingSlowlyError(Exception):
+    def __init__(self, message):
+        self.message = 'Got MySQL error: {}. Try going slowly.'.format(message)
+
+
 def formatEntry(record):
     '''Format one data record for insertion into database.
 
@@ -57,7 +62,15 @@ def formatEntry(record):
     return tuple(values)
 
 def insertValues(db, records):
-    '''Write new values to DB.'''
+    '''Write new values to DB.
+
+    Try to use executemany, since it's faster.
+    Sometimes, we run out of resources and get an
+    operational error with code 2006
+    (MySQL Server has gone away). If that happens,
+    raise an exception and try to execute each
+    insertion request separately - it's slower,
+    but more likely to work.'''
     if len(records) > 0:
         cursor = db.cursor()
         valueParts = []
@@ -65,18 +78,29 @@ def insertValues(db, records):
             valueParts.append(formatEntry(record))
         sql = insertFormat % (tableName, ','.join(columnNames), valueFormat)
 	#print valueParts
-        cursor.executemany(sql, valueParts)
-        cursor.close()
-        db.commit()
+        try:
+            cursor.executemany(sql, valueParts)
+            cursor.close()
+            db.commit()
+        except MySQLdb.OperationalError as e:
+            cursor.close()
+            print e
+            if e.args[0] == 2006:
+                raise TryGoingSlowlyError(str(e))
+            else:
+                raise
 
 def insertValuesSlowly(db, records):
-    '''Write new values to DB.'''
+    '''Write new values to DB.
+
+    Use execute, rather than executemany.'''
+    print 'Going slowly.'
     for record in records:
         valuesList = []
         for i in range(len(columnNames)):
             valuesList.append(str(record[recordNames[i]]))
         sql = insertFormat % (tableName, ','.join(columnNames), tuple(valuesList))
-        print sql
+        #print sql
         cursor = db.cursor()
         cursor.execute(sql)
         cursor.close()
@@ -124,8 +148,14 @@ def main(argv=None):
 			 read_default_file="~/.my.cnf")
 
     # Update database.
-    insertValues(db, records)
-    #insertValuesSlowly(db, records)
+    try:
+        insertValues(db, records)
+    except TryGoingSlowlyError:
+        db.close()
+        db = MySQLdb.connect(host=dbHost,
+                             db=dbName,
+			     read_default_file="~/.my.cnf")
+        insertValuesSlowly(db, records)
     db.close()
 
 if __name__ == '__main__':
