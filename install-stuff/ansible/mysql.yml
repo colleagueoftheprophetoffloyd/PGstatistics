@@ -63,8 +63,10 @@
       register: get-my-cnf
 
     - name: Update mySQL config.
-      shell: sed --in-place -e "s/# default-authentication-plugin=mysql_native_password/default-authentication-plugin=mysql_native_password/" /tmp/my.cnf
-      register: mysql-config-patch
+      lineinfile: 
+        path: /tmp/my.cnf
+        line: "default-authentication-plugin=mysql_native_password"
+        insertafter: "#default-authentication-plugin"
 
     - name: Replace mySQL config in container.
       shell: docker cp /tmp/my.cnf stats-mysql:/etc
